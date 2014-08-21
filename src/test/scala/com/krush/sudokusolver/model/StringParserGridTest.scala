@@ -11,9 +11,9 @@ class StringParserGridTest extends FunSuite {
   	test("string parse grid") {
 		new StringParserGrid {
 		  val init: State = (pos: Pos) => true
-		  val grid = "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......"
-		  assert(state(Pos('A',0, 4)), "0,0")
-		  //assert(!state(Pos(4,11)), "4,11")
+		  val grid = "400000805030000000000700000020000060000080400000010000000603070500200000104000000"
+		  assert(state(Pos('A',1, 4)))
+		  assert(state(Pos('A',2, 4)))
 		}
 	}
 

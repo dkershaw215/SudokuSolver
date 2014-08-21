@@ -6,13 +6,11 @@ trait Grid {
   
   case class Pos(row: Char, col: Int, value: Int) {
 
-    require(peers() forall (p => this != p ), "Invalid Element, this position has a peer of the same value")
-    
     require(isValid(), "Invalid Element, this position is outside the 9x9 grid")
     
-    def vPeers(): Set[Pos] = rowRef map(Pos(_, col, 0)) filter (_.row != row ) toSet
+    def vPeers(): Set[Pos] = rowRef map(findPos(_, col, vector)) filter (_.row != row ) toSet
     
-    def hPeers(): Set[Pos] = List.range(1,10) map (Pos(row, _, 0)) filter (_.col != col ) toSet
+    def hPeers(): Set[Pos] = List.range(1,10) map (findPos(row, _, vector)) filter (_.col != col ) toSet
 
     def squarePeers(): Set[Pos] = Set()
 
@@ -36,8 +34,18 @@ trait Grid {
   /**
    * The current of this game. This value is left abstract.
    */
+
   
-  //val state: State
+  def gridFunction(gridVector: Vector[Vector[Int]]): Pos => Boolean = p => {
+	  if (p.col < 0 || p.col > gridVector.length - 1) false
+	  else if ( rowRef.indexOf(p.row) < 0 ) false
+	  else gridVector.apply(p.col).apply(rowRef.indexOf(p.row)) != '0' && (p.peers() forall (l => p != l ))}
+  
+  def findPos(row: Char, col: Int, gridVector: Vector[Vector[Int]]): Pos = Pos(row, col, gridVector.apply(col).apply(rowRef.indexOf(row)))
+  
+  val vector: Vector[Vector[Int]]
+  
+  val state: State
   
   val init: State
   
