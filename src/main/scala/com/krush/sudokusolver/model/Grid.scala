@@ -8,9 +8,9 @@ trait Grid {
 
     require(isValid(), "Invalid Element, this position is outside the 9x9 grid")
     
-    def vPeers(): Set[Pos] = rowRef map(findPos(_, col, vector)) filter (_.row != row ) toSet
+    def vPeers(): Set[Pos] = rowRef map(findPos(_, col, grid)) filter (_.row != row ) toSet
     
-    def hPeers(): Set[Pos] = List.range(1,10) map (findPos(row, _, vector)) filter (_.col != col ) toSet
+    def hPeers(): Set[Pos] = List.range(1,10) map (findPos(row, _, grid)) filter (_.col != col ) toSet
 
     def squarePeers(): Set[Pos] = Set()
 
@@ -36,14 +36,18 @@ trait Grid {
    */
 
   
-  def gridFunction(gridVector: Vector[Vector[Int]]): Pos => Boolean = p => {
-	  if (p.col < 0 || p.col > gridVector.length - 1) false
+  def gridFunction(gridList: List[List[Int]]): Pos => Boolean = p => {
+	  if (p.col < 0 || p.col > gridList.length - 1) false
 	  else if ( rowRef.indexOf(p.row) < 0 ) false
-	  else gridVector.apply(p.col).apply(rowRef.indexOf(p.row)) != '0' && (p.peers() forall (l => p != l ))}
+	  else {
+	    val t = gridList.apply(p.col - 1).apply(rowRef.indexOf(p.row))
+	    t != 0 && (p.peers() forall (l => p != l ))
+	  }
+  }
   
-  def findPos(row: Char, col: Int, gridVector: Vector[Vector[Int]]): Pos = Pos(row, col, gridVector.apply(col).apply(rowRef.indexOf(row)))
+  def findPos(row: Char, col: Int, gridList: List[List[Int]]): Pos = Pos(row, col, gridList.apply(col - 1).apply(rowRef.indexOf(row)))
   
-  val vector: Vector[Vector[Int]]
+  val grid: List[List[Int]]
   
   val state: State
   

@@ -8,6 +8,16 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class GridTest extends FunSuite {
 
+    val blankGrid = List(List(0, 0, 0, 0, 0, 0, 0, 0, 0),
+             List(0, 0, 0, 0, 0, 0, 0, 0, 0),
+             List(0, 0, 0, 0, 0, 0, 0, 0, 0),
+             List(0, 0, 0, 0, 0, 0, 0, 0, 0),
+             List(0, 0, 0, 0, 0, 0, 0, 0, 0),
+             List(0, 0, 0, 0, 0, 0, 0, 0, 0),
+             List(0, 0, 0, 0, 0, 0, 0, 0, 0),
+             List(0, 0, 0, 0, 0, 0, 0, 0, 0),
+             List(0, 0, 0, 0, 0, 0, 0, 0, 0)) 
+  
 	test("make string blank grid") {
 	    val initGrid =  """. . . | . . . | . . . 
                           |. . . | . . . | . . . 
@@ -22,7 +32,7 @@ class GridTest extends FunSuite {
                           |. . . | . . . | . . . 
 	                      |""".stripMargin
 		new Grid {
-	      val vector = Vector()
+	      val grid = List()
 		  val init: State = (pos: Pos) => true  
 		  val state: State = (pos: Pos) => true  
 		  assert(initGrid == makeString())
@@ -32,7 +42,7 @@ class GridTest extends FunSuite {
 	
 	test("v peers Pos") {
 		new Grid {
-	      val vector = Vector()
+	      val grid = blankGrid
 		  val init: State = (pos: Pos) => true  
 		  val state: State = (pos: Pos) => true  
 		  val vPeers =  Set(Pos('B', 1, 0), Pos('C', 1, 0), Pos('D', 1, 0), Pos('E', 1, 0), Pos('F', 1, 0), Pos('G', 1, 0), Pos('H', 1, 0), Pos('I', 1, 0))
@@ -43,7 +53,7 @@ class GridTest extends FunSuite {
 
 		test("h peers Pos") {
 		new Grid {
-	      val vector = Vector()
+	      val grid = blankGrid
 		  val init: State = (pos: Pos) => true  
 		  val state: State = (pos: Pos) => true  
 		  val hPeers =  Set(Pos('A', 2, 0), Pos('A', 3, 0), Pos('A', 4, 0), Pos('A', 5, 0), Pos('A', 6, 0), Pos('A', 7, 0), Pos('A', 8, 0), Pos('A', 9, 0))
