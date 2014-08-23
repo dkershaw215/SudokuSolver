@@ -30,14 +30,8 @@ trait StringParserGrid extends Grid {
   
   lazy val grid: List[List[Int]] = buildGrid()
   
-  def buildGrid(): List[List[Int]] = for ( s <- lSplit9by9() ) yield s map(_.asDigit) toList
+  def buildGrid(): List[List[Int]] = for ( s <- gridString.grouped(9) toList ) yield s map(_.asDigit) toList
     
   lazy val state: State = gridFunction(grid)
-  
-  def lSplit9by9(): List[String] = lSplit(List(9, 18, 27, 36, 45, 54, 63, 72), gridString)
-  
-  def lSplit(pos: List[Int], s: String): List[String] = pos match {
-    case x :: rest => s.substring(0,x) :: lSplit(rest.map(_ - x), s.substring(x))
-    case Nil => List(s)
-  }
+
 }
