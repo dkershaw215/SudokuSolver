@@ -3,39 +3,67 @@ package com.krush.sudokusolver
 import com.krush.sudokusolver.model.Grid
 import com.krush.sudokusolver.model.StringParserGrid
 
+import scala.collection.mutable.Map
+
 trait Solver extends Grid with StringParserGrid {
 
   def solve(): Grid = {
     
-    def done(checkGrid: Grid): Boolean = checkGrid.flatten.forall(_ != 0)
+    def done(checkMap: scala.collection.immutable.Map[Pos, List[Int]]): Boolean = checkMap.forall(_._2.size == 1)
     
-    def assign(pGrid: Grid, p: Pos): Grid = pGrid.updated(rowRef.indexOf(p.row), pGrid(rowRef.indexOf(p.row)).updated(p.col - 1, p.value)) 
-    
-    def solveRec(current: Grid):Grid = {
-        println(makeString(current))
+    def solveRec(current: scala.collection.immutable.Map[Pos, List[Int]]):scala.collection.immutable.Map[Pos, List[Int]] = {
         if (done(current)) return current
         else {
         	  for ( r <- rowRef) {
       	      for (c <- colRef) {
-	            val p = findPos(r, c, current)
-	              if (p.value == 0) {
-	                 val currentGrid = gridFunction(current)
-	                 for (v <- colRef) {
-	                   val testPos = Pos(r, c, v)
-	                   if (currentGrid(testPos)) {
-	                     val newGrid = assign(current, testPos) 
-	                     val result = solveRec(newGrid)
+                println(makeString(current))
+  	            val p = Pos(r, c)
+	              if (current(p).size > 1) {
+	                 for (v <- current(p)) {
+	                   val testMap = current.updated(p, List(v))
+  	                 val testGrid = gridFunction(testMap)
+	                   if (testGrid(p)) {
+	                     val elimateMoreMap = eliminateRec(collection.mutable.Map(testMap.toSeq: _*), p, v)
+	                     val result = solveRec(collection.immutable.Map(elimateMoreMap.toSeq: _*))
 	                     if (!result.isEmpty) return result
 	                   }
 	                 }
-                   return List()
+                   return scala.collection.immutable.Map[Pos, List[Int]]()
 	              }
       	      }
         	  }      	      
-            return List()
+            return scala.collection.immutable.Map[Pos, List[Int]]()
         }
     }
-    solveRec(grid)
+
+    def eliminateRec(currentValues: scala.collection.mutable.Map[Pos, List[Int]], p: Pos, v: Int):scala.collection.mutable.Map[Pos, List[Int]] = {
+        //println(currentValues.mkString("\n"))
+        if (!(currentValues(p) contains v))
+            currentValues
+        else {
+            if (currentValues(p).size != 1) {
+              currentValues.put(p, currentValues(p).filter(_ != v))
+            }
+            //println(currentValues.mkString("\n"))
+            if (currentValues(p).size == 1) {
+              for (ps <- p.peers()) {
+                eliminateRec(currentValues, ps, currentValues(p)(0))
+              }
+            }
+            currentValues
+        }
+    }
+
+    var map = collection.mutable.Map(grid.toSeq: _*) 
+    //println(map.mkString("\n"))
+    
+    for ( (k, v) <- map.filter( _._2.size == 1) ) {
+        map = eliminateRec(map, k, v(0))
+    }
+    
+    println(map.mkString("\n"))
+
+    solveRec(collection.immutable.Map(map.toSeq: _*) )
 
   }
  

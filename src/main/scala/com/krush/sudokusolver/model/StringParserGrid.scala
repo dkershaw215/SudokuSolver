@@ -28,10 +28,15 @@ trait StringParserGrid extends Grid {
    * a valid position inside the grid described by `gridList`.
    */
   
-  lazy val grid: List[List[Int]] = buildGrid()
+  lazy val grid: Map[Pos, List[Int]] = buildGrid()
   
-  def buildGrid(): List[List[Int]] = for ( s <- gridString.grouped(9) toList ) yield s map(_.asDigit) toList
-    
   lazy val state: State = gridFunction(grid)
+  
+  def buildGrid(): Map[Pos, List[Int]] = {
+    Map() ++ ( for (  vs <- List() ++ (for (r <- rowRef; c <-colRef) yield (r, c)) zipWithIndex ) yield {
+      if (gridString(vs._2) == '0') (Pos(vs._1._1, vs._1._2) -> colRef)
+      else (Pos(vs._1._1, vs._1._2) -> List(gridString(vs._2).asDigit))
+    })
+  }
 
 }

@@ -6,17 +6,19 @@ trait Grid {
   
   val colRef = List.range(1,10)
   
-  case class Pos(row: Char, col: Int, value: Int) {
+  //val values = Map[Pos, List[Int]]()
+  
+  case class Pos(row: Char, col: Int) {
 
     require(isValid(), "Invalid Element, this position is outside the 9x9 grid")
     
-    def vPeers(): Set[Pos] = rowRef map(findPos(_, col, grid)) filter (_.row != row ) toSet
+    def vPeers(): Set[Pos] = rowRef map(Pos(_, col)) filter (_.row != row ) toSet
 
-    def vPeers(peerGrid: Grid): Set[Pos] = rowRef map(findPos(_, col, peerGrid)) filter (_.row != row ) toSet
+    def vPeers(peerGrid: Grid): Set[Pos] = rowRef map(Pos(_, col)) filter (_.row != row ) toSet
 
-    def hPeers(): Set[Pos] = colRef map (findPos(row, _, grid)) filter (_.col != col ) toSet
+    def hPeers(): Set[Pos] = colRef map (Pos(row, _)) filter (_.col != col ) toSet
 
-    def hPeers(peerGrid: Grid): Set[Pos] = colRef map (findPos(row, _, peerGrid)) filter (_.col != col ) toSet
+    def hPeers(peerGrid: Grid): Set[Pos] = colRef map (Pos(row, _)) filter (_.col != col ) toSet
 
     def squarePeers(): Set[Pos] = quadrants.filter(_.exists(p => p.col == col && p.row == row)).apply(0).filter(p => !(p.col == col && p.row == row)).toSet
 
@@ -25,10 +27,6 @@ trait Grid {
     def peers(): Set[Pos] = squarePeers() ++ hPeers() ++ vPeers()
 
     def peers(peerGrid: Grid): Set[Pos] = squarePeers(peerGrid) ++ hPeers(peerGrid) ++ vPeers(peerGrid)
-
-    def ==(p: Pos): Boolean =  this.value == p.value
-
-    def !=(p: Pos): Boolean =  this.value != p.value
     
     def isValid(): Boolean = colRef.contains(col) && rowRef.contains(row)
 
@@ -41,19 +39,17 @@ trait Grid {
    */
   type State = Pos => Boolean
 
-  type Grid =  List[List[Int]]
+  type Grid =  Map[Pos, List[Int]]
 
   /**
    * The current of this game. This value is left abstract.
    */
 
   
-  def gridFunction(gridList: List[List[Int]]): Pos => Boolean = p => {
-    val peers = p.peers(gridList)
+  def gridFunction(gridMap: Map[Pos, List[Int]]): Pos => Boolean = p => {
+    val peers = p.peers(gridMap)
     (peers forall (l => p != l ))
   }
-  
-  def findPos(row: Char, col: Int, gridList: List[List[Int]]): Pos = Pos(row, col, gridList.apply(rowRef.indexOf(row)).apply(col - 1))
   
   private def splitN[A](list: List[A], n: Int): List[List[A]] = if (n == 1) List(list) else List(list.head) :: splitN(list.tail, n - 1)
   
@@ -61,7 +57,7 @@ trait Grid {
     for {
       rowGroup <- rowRef.grouped(3).toList
       colGroup <- List.range(1,10).grouped(3).toList
-      q <- List(for ( r <- rowGroup; c <- colGroup ) yield findPos(r, c, grid))
+      q <- List(for ( r <- rowGroup; c <- colGroup ) yield Pos(r, c))
      } yield q
   }
 
@@ -69,7 +65,7 @@ trait Grid {
     for {
       rowGroup <- rowRef.grouped(3).toList
       colGroup <- List.range(1,10).grouped(3).toList
-      q <- List(for ( r <- rowGroup; c <- colGroup ) yield findPos(r, c, peerGrid))
+      q <- List(for ( r <- rowGroup; c <- colGroup ) yield Pos(r, c))
      } yield q
   }
 
@@ -83,8 +79,8 @@ trait Grid {
     var gridString = ""
 	  for ( r <- rowRef) {
 	      for (c <- colRef) {
-	        val p = findPos(r, c, grid)
-    		  if (p.value == 0) gridString += ". " else gridString += p.value + " "
+	        val p = Pos(r, c)
+    		  if (grid(p).size > 1) gridString += "* " else gridString += grid(p)(0) + " "
     		  if (List(3,6) contains c) {
     		  gridString += "| ";
     		  }
@@ -96,12 +92,12 @@ trait Grid {
       return gridString
   }
 
-  def makeString(currentGrid: Grid): String = {
+  def makeString(currentValues:  Map[Pos, List[Int]]): String = {
     var gridString = ""
 	  for ( r <- rowRef) {
 	      for (c <- colRef) {
-	        val p = findPos(r, c, currentGrid)
-    		  if (p.value == 0) gridString += ". " else gridString += p.value + " "
+	        val p = Pos(r, c)
+    		  if (currentValues(p).size > 1) gridString += "* " else gridString += currentValues(p)(0) + " "
     		  if (List(3,6) contains c) {
     		  gridString += "| ";
     		  }
@@ -113,4 +109,22 @@ trait Grid {
       return gridString
   }
 
+  
+  def makeStringAllValues(currentValues:  Map[Pos, List[Int]]): String = {
+    var gridString = ""
+	  for ( r <- rowRef) {
+	      for (c <- colRef) {
+	        val p = Pos(r, c)
+    		  gridString += currentValues(p).mkString + " "
+    		  if (List(3,6) contains c) {
+    		  gridString += "| ";
+    		  }
+    	  }
+    	  gridString += "\r\n";
+    	  if (List('C', 'F') contains r)
+    		  gridString += "------+-------+------\r\n";
+      }
+      return gridString
+  }
+  
 }
