@@ -48,7 +48,7 @@ trait Grid {
   
   def gridFunction(gridMap: Map[Pos, List[Int]]): Pos => Boolean = p => {
     val peers = p.peers(gridMap)
-    (peers forall (l => p != l ))
+    (peers forall (l => gridMap(p) != gridMap(l) ))
   }
   
   private def splitN[A](list: List[A], n: Int): List[List[A]] = if (n == 1) List(list) else List(list.head) :: splitN(list.tail, n - 1)
@@ -126,5 +126,9 @@ trait Grid {
       }
       return gridString
   }
+
+  def makeString(currentValues:  collection.mutable.Map[Pos, List[Int]]): String = makeString(collection.immutable.Map(currentValues.toSeq: _*))
+
+  def makeStringAllValues(currentValues:  collection.mutable.Map[Pos, List[Int]]): String = makeStringAllValues(collection.immutable.Map(currentValues.toSeq: _*))
   
 }

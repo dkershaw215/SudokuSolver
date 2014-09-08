@@ -25,6 +25,7 @@ trait Solver extends Grid with StringParserGrid {
 	                   if (testGrid(p)) {
 	                     val elimateMoreMap = eliminateRec(collection.mutable.Map(testMap.toSeq: _*), p, v)
 	                     val result = solveRec(collection.immutable.Map(elimateMoreMap.toSeq: _*))
+	                     //val result = solveRec(testMap)
 	                     if (!result.isEmpty) return result
 	                   }
 	                 }
@@ -33,24 +34,6 @@ trait Solver extends Grid with StringParserGrid {
       	      }
         	  }      	      
             return scala.collection.immutable.Map[Pos, List[Int]]()
-        }
-    }
-
-    def eliminateRec(currentValues: scala.collection.mutable.Map[Pos, List[Int]], p: Pos, v: Int):scala.collection.mutable.Map[Pos, List[Int]] = {
-        //println(currentValues.mkString("\n"))
-        if (!(currentValues(p) contains v))
-            currentValues
-        else {
-            if (currentValues(p).size != 1) {
-              currentValues.put(p, currentValues(p).filter(_ != v))
-            }
-            //println(currentValues.mkString("\n"))
-            if (currentValues(p).size == 1) {
-              for (ps <- p.peers()) {
-                eliminateRec(currentValues, ps, currentValues(p)(0))
-              }
-            }
-            currentValues
         }
     }
 
@@ -66,7 +49,28 @@ trait Solver extends Grid with StringParserGrid {
     solveRec(collection.immutable.Map(map.toSeq: _*) )
 
   }
- 
+
+  
+  def eliminateRec(currentValues: scala.collection.mutable.Map[Pos, List[Int]], p: Pos, v: Int):scala.collection.mutable.Map[Pos, List[Int]] = {
+      println(makeStringAllValues(currentValues))
+      println(makeString(currentValues))
+      if (!(currentValues(p) contains v))
+          currentValues
+      else {
+          if (currentValues(p).size != 1) {
+            currentValues.put(p, currentValues(p).filter(_ != v))
+          }
+          println(makeStringAllValues(currentValues))
+          println(makeString(currentValues))
+          if (currentValues(p).size == 1) {
+            for (ps <- p.peers()) {
+              eliminateRec(currentValues, ps, currentValues(p)(0))
+            }
+          }
+          currentValues
+      }
+  }
+  
 }
 
 object SolverMain {
