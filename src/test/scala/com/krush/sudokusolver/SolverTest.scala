@@ -29,7 +29,7 @@ class SolverTest extends FunSuite {
 			println(makeStringAllValues(collection.immutable.Map(testList2.toSeq: _*)))
       
       for ( (k, v) <- testList2.filter( _._2.size == 1) ) {
-          testList2 = eliminateRec(testList2, k, v(0))
+          testList2 = eliminateRec(testList2, k, v(0), true)
       }
       
 			println(makeStringAllValues(collection.immutable.Map(testList2.toSeq: _*)))
