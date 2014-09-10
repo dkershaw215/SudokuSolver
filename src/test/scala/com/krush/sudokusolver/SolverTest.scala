@@ -24,15 +24,15 @@ class SolverTest extends FunSuite {
       )
    
 
-      var testList2 = collection.mutable.Map(grid.toSeq: _*) 
+      var testList2 = grid
 
-			println(makeStringAllValues(collection.immutable.Map(testList2.toSeq: _*)))
+			println(makeStringAllValues(testList2))
       
       for ( (k, v) <- testList2.filter( _._2.size == 1) ) {
           testList2 = eliminateRec(testList2, k, v(0), true)
       }
       
-			println(makeStringAllValues(collection.immutable.Map(testList2.toSeq: _*)))
+			println(makeStringAllValues(testList2))
 		  assert(testList2 == buildGrid())
 		}
 	}

@@ -21,9 +21,8 @@ class StringParserGridTest extends FunSuite {
 		              Pos('G', 1) -> colRef, Pos('G', 2) -> colRef, Pos('G', 3) -> colRef, Pos('G', 4) -> List(6), Pos('G', 5) -> colRef, Pos('G', 6) -> List(3), Pos('G', 7) -> colRef, Pos('G', 8) -> List(7), Pos('G', 9) -> colRef,
 		              Pos('H', 1) -> List(5), Pos('H', 2) -> colRef, Pos('H', 3) -> colRef, Pos('H', 4) -> List(2), Pos('H', 5) -> colRef, Pos('H', 6) -> colRef, Pos('H', 7) -> colRef, Pos('H', 8) -> colRef, Pos('H', 9) -> colRef,
 		              Pos('I', 1) -> List(1), Pos('I', 2) -> colRef, Pos('I', 3) -> List(4), Pos('I', 4) -> colRef, Pos('I', 5) -> colRef, Pos('I', 6) -> colRef, Pos('I', 7) -> colRef, Pos('I', 8) -> colRef, Pos('I', 9) -> colRef
-      )
+				  )
    
-			//println(makeString())							   
 		  assert(testList == buildGrid())
 		}
 	}
