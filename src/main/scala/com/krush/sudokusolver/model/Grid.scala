@@ -52,6 +52,8 @@ trait Grid {
   
   val grid: Grid
   
+  def isValid(g: Grid): Boolean = g.filter( _._2.size == 1) forall (x => gridFunction(g)(x._1))
+  
   def makeString(): String = {
     var gridString = ""
 	  for ( r <- rowRef) {
