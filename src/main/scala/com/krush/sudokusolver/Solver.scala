@@ -10,6 +10,7 @@ trait Solver extends Grid with StringParserGrid {
     def done(checkMap: Grid): Boolean = checkMap.forall(_._2.size == 1)
     
     def solveRec(current: Grid): Grid = {
+        if (!isValid(current)) return Map[Pos, List[Int]]()
         if (done(current)) return current
         else {
         	  for ( r <- rowRef; c <- colRef ) {
@@ -17,7 +18,7 @@ trait Solver extends Grid with StringParserGrid {
 	              if (current(p).size > 1) {
 	                 for (v <- current(p)) {
 	                   val testMap = current.updated(p, List(v))
-	                   if (gridFunction(testMap)(p)) {
+	                   if (isValid(testMap)) {
 	                     val result = solveRec(eliminateRec(testMap, p, v, true))
 	                     if (!result.isEmpty) return result
 	                   }
@@ -43,7 +44,6 @@ trait Solver extends Grid with StringParserGrid {
 
   
   def eliminateRec(currentValues: Grid, p: Pos, v: Int, initElim: Boolean): Grid = {
-//      println(makeStringAllValues(currentValues))
       if (!(currentValues(p) contains v))
           currentValues
       else {
@@ -56,10 +56,9 @@ trait Solver extends Grid with StringParserGrid {
           }
           if (initElim || testValues(p).size == 1) {
             for (ps <- p.peers()) {
-               eliminateRec(testValues, ps, testValues(p)(0), false)
-              //testValues = eliminateRec(testValues, ps, testValues(p)(0), false) // this has infinite loop but is faster
-              //println(makeStringAllValues(testValues))
-              //println("eliminated pos" + (p, v) )
+              if (testValues(ps).size > 1) {
+                testValues = eliminateRec(testValues, ps, testValues(p)(0), false) // this has infinite loop but is faster
+              }
             }
           }
           testValues
@@ -74,11 +73,13 @@ object SolverMain {
         new Solver {
           
            val t1 = System.currentTimeMillis
-           //val gridString = "400000805030000000000700000020000060000080400000010000000603070500200000104000000" //slow puzzle - infinite loop
+           val gridString = "480300000000000071020000000705000060000200800000000000001076000300000400000050000" // really slow puzzle
+           //val gridString = "400000805030000000000700000020000060000080400000010000000603070500200000104000000" //slow puzzle
            //val gridString = "600108203020040090803005400504607009030000050700803102001700906080030020302904005" //fast puzzle
-           val gridString = "000090820100000509709010000062701090000060000080309140000080902804000030016030000" //not so fast puzzle
+           //val gridString = "000090820100000509709010000062701090000060000080309140000080902804000030016030000" //not so fast puzzle
            //val gridString = "000090820010000509709010000062701090000060000080309140000080902804000030016030000" //invalid start grid
            val solution = solve()
+           assert(isValid(solution))
            val t2 = System.currentTimeMillis
            println("Solution is:\n" + makeString(solution))
            println((t2 - t1) + " msecs")
