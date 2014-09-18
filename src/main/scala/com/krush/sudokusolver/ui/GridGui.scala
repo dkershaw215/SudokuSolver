@@ -1,9 +1,10 @@
 package com.krush.sudokusolver.ui
 
-import scala.swing.{TextField, GridPanel, SimpleSwingApplication, MainFrame, BorderPanel, Dimension, Swing}
-import scala.swing.BorderPanel.Position.Center
+import scala.swing.{TextField, GridPanel, SimpleSwingApplication, MainFrame, BorderPanel, Dimension, Swing, Button}
+import scala.swing.BorderPanel.Position.{Center, East}
 import scala.swing.Alignment.{Center => hCenter}
 import com.krush.sudokusolver.Solver
+import java.awt.{ Color }
 
 object GridGui extends SimpleSwingApplication {
 
@@ -15,80 +16,67 @@ object GridGui extends SimpleSwingApplication {
      
      title = "Soduko Solver"
 
-     val textField = new TextField {
-      columns = 1
-    }
-    
      def gridPanel(l: List[String]) = new GridPanel(3, 3) {
-        contents += new TextField {
+        contents ++= (for (i <- l) yield new TextField {
           columns = 1
-          text = l(0)
+          text = i
           horizontalAlignment = hCenter
-        }
-        contents += new TextField {
-          columns = 1
-          text = l(1)
-          horizontalAlignment = hCenter
-        }
-        contents += new TextField {
-          columns = 1
-          text = l(2)
-          horizontalAlignment = hCenter
-        }
-        contents += new TextField {
-          columns = 1
-          text = l(3)
-          horizontalAlignment = hCenter
-        }
-        contents += new TextField {
-          columns = 1
-          text = l(4)
-          horizontalAlignment = hCenter
-        }
-        contents += new TextField {
-          columns = 1
-          text = l(5)
-          horizontalAlignment = hCenter
-        }
-        contents += new TextField {
-          columns = 1
-          text = l(6)
-          horizontalAlignment = hCenter
-        }
-        contents += new TextField {
-          columns = 1
-          text = l(7)
-          horizontalAlignment = hCenter
-        }
-        contents += new TextField {
-          columns = 1
-          text = l(8)
-          horizontalAlignment = hCenter
-        }
+        } )
         border = Swing.EmptyBorder(2) 
      }
-
-    val cells = (for( r <- solver.rowRef; c <- solver.colRef) yield solver.Pos(r, c)) take 9
-    val grid = solver.grid
-    val cell1 = (cells foldRight List[Int]()) { (v, a) => solver.grid(v)(0) :: a } map {x => x.toString}
+    def makeRow(l: List[Int]): Int = if (l.size > 1) 0 else l(0)
+    
+    val cells = for (q <- solver.quadrants) yield (q foldRight List[Int]()) { (v, a) =>  makeRow(solver.grid(v)) :: a } map {x => if (x == 0) "" else x.toString}
     val superGrid = new GridPanel(3,3) {
-      contents += gridPanel(cell1)
-      contents += gridPanel(solver.colRef  map {x => x.toString})
-      contents += gridPanel(solver.colRef  map {x => x.toString})
-      contents += gridPanel(solver.colRef  map {x => x.toString})
-      contents += gridPanel(solver.colRef  map {x => x.toString})
-      contents += gridPanel(solver.colRef  map {x => x.toString})
-      contents += gridPanel(solver.colRef  map {x => x.toString})
-      contents += gridPanel(solver.colRef  map {x => x.toString})
-      contents += gridPanel(solver.colRef  map {x => x.toString})
+      contents ++= (for ( c <- cells ) yield gridPanel(c))
+    }
+
+    val buttonSize = new Dimension(70,30)
+    val solveButton = new Button {
+      text = "Solve"
+      foreground = Color.blue
+      background = Color.lightGray
+      borderPainted = true
+      enabled = true
+      tooltip = "Solve the puzzle"
+      preferredSize = buttonSize
+      minimumSize = buttonSize
+      maximumSize = buttonSize
+    }
+    val newButton = new Button {
+      text = "New"
+      foreground = Color.blue
+      background = Color.lightGray
+      borderPainted = true
+      enabled = true
+      tooltip = "Start a new puzzle"
+      preferredSize = buttonSize
+      minimumSize = buttonSize
+      maximumSize = buttonSize
+    }
+    val checkButton = new Button {
+      text = "Check"
+      foreground = Color.blue
+      background = Color.lightGray
+      borderPainted = true
+      enabled = true
+      tooltip = "Check your puzzle"
+      preferredSize = buttonSize
+      minimumSize = buttonSize
+      maximumSize = buttonSize
     }
     
-    
+    val buttonPanel = new scala.swing.BoxPanel(scala.swing.Orientation.Vertical) {
+      contents += newButton
+      contents += checkButton
+      contents += solveButton
+    }
     contents = new BorderPanel {
       layout(superGrid) = Center
+      layout(buttonPanel) = East
     }
     
-    size = new Dimension(300,320)    
+    size = new Dimension(400,320)    
     
    }  
 }
