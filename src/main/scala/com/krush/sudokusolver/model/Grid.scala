@@ -6,7 +6,7 @@ trait Grid {
   
   val colRef = List.range(1,10)
   
-  case class Pos(row: Char, col: Int) {
+  case class Pos(row: Char, col: Int) extends Ordered[Pos] {
 
     require(isValid(), "Invalid Element, this position is outside the 9x9 grid")
     
@@ -19,6 +19,8 @@ trait Grid {
     def peers(): Set[Pos] = squarePeers() ++ hPeers() ++ vPeers()
 
     def isValid(): Boolean = colRef.contains(col) && rowRef.contains(row)
+    
+    def compare(that: Pos): Int = this.row.toString + this.col.toString compare that.row.toString + that.col.toString
 
   }
   
