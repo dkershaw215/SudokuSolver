@@ -1,7 +1,10 @@
 package com.krush.sudokusolver
 
 import com.krush.sudokusolver.model.Grid
+import com.krush.sudokusolver.model.Pos
 import com.krush.sudokusolver.model.StringParserGrid
+
+import scala.collection.immutable.TreeMap
 
 trait Solver extends Grid with StringParserGrid {
 
@@ -10,10 +13,10 @@ trait Solver extends Grid with StringParserGrid {
     def done(checkMap: Grid): Boolean = checkMap.forall(_._2.size == 1)
     
     def solveRec(current: Grid): Grid = {
-        if (!isValid(current)) return Map[Pos, List[Int]]()
+        if (!isValid(current)) return TreeMap[Pos, List[Int]]()
         if (done(current)) return current
         else {
-        	  for ( r <- rowRef; c <- colRef ) {
+        	  for ( r <- Grid.rowRef; c <- Grid.colRef ) {
   	            val p = Pos(r, c)
 	              if (current(p).size > 1) {
 	                 for (v <- current(p)) {
@@ -23,10 +26,10 @@ trait Solver extends Grid with StringParserGrid {
 	                     if (!result.isEmpty) return result
 	                   }
 	                 }
-                   return Map[Pos, List[Int]]()
+                   return TreeMap[Pos, List[Int]]()
 	              }
         	  }      	      
-            return Map[Pos, List[Int]]()
+            return TreeMap[Pos, List[Int]]()
         }
     }
 
@@ -73,9 +76,9 @@ object SolverMain {
         new Solver {
           
            val t1 = System.currentTimeMillis
-           val gridString = "480300000000000071020000000705000060000200800000000000001076000300000400000050000" // really slow puzzle
+           //val gridString = "480300000000000071020000000705000060000200800000000000001076000300000400000050000" // really slow puzzle
            //val gridString = "400000805030000000000700000020000060000080400000010000000603070500200000104000000" //slow puzzle
-           //val gridString = "600108203020040090803005400504607009030000050700803102001700906080030020302904005" //fast puzzle
+           val gridString = "600108203020040090803005400504607009030000050700803102001700906080030020302904005" //fast puzzle
            //val gridString = "000090820100000509709010000062701090000060000080309140000080902804000030016030000" //not so fast puzzle
            //val gridString = "000090820010000509709010000062701090000060000080309140000080902804000030016030000" //invalid start grid
            val solution = solve()

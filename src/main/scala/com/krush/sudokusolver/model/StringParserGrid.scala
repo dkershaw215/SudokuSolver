@@ -1,5 +1,7 @@
 package com.krush.sudokusolver.model
 
+import scala.collection.immutable.TreeMap
+
 trait StringParserGrid extends Grid {
 
   val gridString: String
@@ -31,10 +33,10 @@ trait StringParserGrid extends Grid {
   lazy val grid: Grid = buildGrid()
   
   def buildGrid(): Grid = {
-    Map() ++ ( for (  vs <- List() ++ (for (r <- rowRef; c <-colRef) yield (r, c)) zipWithIndex ) yield {
-      if (gridString(vs._2) == '0') (Pos(vs._1._1, vs._1._2) -> colRef)
+    TreeMap(( for (  vs <- List() ++ (for (r <- Grid.rowRef; c <- Grid.colRef) yield (r, c)) zipWithIndex ) yield {
+      if (gridString(vs._2) == '0') (Pos(vs._1._1, vs._1._2) -> Grid.colRef)
       else (Pos(vs._1._1, vs._1._2) -> List(gridString(vs._2).asDigit))
-    })
+    }).toArray:_*)
   }
 
 }
