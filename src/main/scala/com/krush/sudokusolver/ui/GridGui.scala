@@ -26,6 +26,7 @@ object GridGui extends SimpleSwingApplication {
    def newTextField(text: String): TextField = new TextField {
       columns = 1
       text = text
+      font = new Font("Ariel", java.awt.Font.PLAIN, 24)
       horizontalAlignment = hCenter
       listenTo(keys)
       reactions += {
@@ -142,10 +143,12 @@ object GridGui extends SimpleSwingApplication {
       contents += customButton
       contents += saveButton
       contents += cancelButton
+      border = Swing.EmptyBorder(4)
     }
     
     val textPanel = new scala.swing.BoxPanel(scala.swing.Orientation.Horizontal) {
       contents += label
+      border = Swing.EmptyBorder(4)
     }
     
     def hideMainButtons() = {
@@ -171,7 +174,7 @@ object GridGui extends SimpleSwingApplication {
       layout(textPanel) = South
     }
     
-    size = new Dimension(410,340)    
+    size = new Dimension(610,540)
     
     listenTo(solveButton)
     listenTo(newButton)
