@@ -1,7 +1,5 @@
 package com.krush.sudokusolver.model
 
-import scala.collection.immutable.TreeMap
-
   case class Pos(row: Char, col: Int) extends Ordered[Pos] {
 
     require(isValid(), "Invalid Element, this position is outside the 9x9 grid")
@@ -48,7 +46,7 @@ trait Grid {
    */
   type State = Pos => Boolean
 
-  type Grid =  TreeMap[Pos, List[Int]]
+  type Grid =  Map[Pos, List[Int]]
 
   /**
    * The current of this game. This value is left abstract.
@@ -56,9 +54,7 @@ trait Grid {
 
   
   def gridFunction(gridMap: Grid): State = p =>  (p.peers() forall (l => gridMap(p) != gridMap(l) ))
-  
-  //private def splitN[A](list: List[A], n: Int): List[List[A]] = if (n == 1) List(list) else List(list.head) :: splitN(list.tail, n - 1)
-    
+      
   val grid: Grid
   
   def isValid(g: Grid): Boolean = g.filter( _._2.size == 1) forall (x => gridFunction(g)(x._1))

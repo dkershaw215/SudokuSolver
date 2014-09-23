@@ -39,7 +39,7 @@ object GridGui extends SimpleSwingApplication {
       }
    }
 
-   val textfieldMap: TreeMap[Pos, TextField] = solver.grid map { case (k, v) => (k, newTextField("")) }
+   val textfieldMap: TreeMap[Pos, TextField] = TreeMap(solver.grid.toSeq:_*) map { case (k, v) => (k, newTextField("")) }
    
    def top = new MainFrame {
      
