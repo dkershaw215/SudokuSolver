@@ -4,8 +4,6 @@ import com.krush.sudokusolver.model.Grid
 import com.krush.sudokusolver.model.Pos
 import com.krush.sudokusolver.model.StringParserGrid
 
-import scala.collection.immutable.TreeMap
-
 trait Solver extends Grid with StringParserGrid {
 
   def solve(): Grid = {
@@ -13,10 +11,10 @@ trait Solver extends Grid with StringParserGrid {
     def done(checkMap: Grid): Boolean = checkMap.forall(_._2.size == 1)
     
     def solveRec(current: Grid): Grid = {
-        if (!isValid(current)) return TreeMap[Pos, List[Int]]()
+        if (!isValid(current)) return Map[Pos, List[Int]]()
         if (done(current)) return current
         else {
-          for ( (p, v)  <- current.filter( _._2.size > 1).toSeq sortBy (_._2.size) ) {
+          for ( (p, v)  <- current.filter( _._2.size > 1).toSeq sortBy ( x => (x._2.size, x._1) ) ) {
              for (v <- current(p)) {
                val testMap = current.updated(p, List(v))
                if (isValid(testMap)) {
@@ -24,9 +22,9 @@ trait Solver extends Grid with StringParserGrid {
                  if (!result.isEmpty) return result
                }
              }
-             return TreeMap[Pos, List[Int]]()
+             return Map[Pos, List[Int]]()
     	  }      	      
-          return TreeMap[Pos, List[Int]]()
+          return Map[Pos, List[Int]]()
         }
     }
 
@@ -45,15 +43,15 @@ trait Solver extends Grid with StringParserGrid {
 	          if (initElim || testValues(p).size == 1) {
 	            for (ps <- p.peers()) {
 	              if (testValues(ps).size > 1) {
-	                testValues = eliminateRec(testValues, ps, testValues(p)(0), false) // this has infinite loop but is faster
+	                testValues = eliminateRec(testValues, ps, testValues(p)(0), false) 
 	              }
 	            }
 	          }
-	          var onlyOneValues = testValues
+/*	          var onlyOneValues = testValues
 	          val onlyOne = for( cs <- p.peers() + p if onlyOneValues(cs).contains(v)) yield cs
 	          if (onlyOne.size == 1) {
 	             testValues.updated(onlyOne.head, List(v))
-	          }
+	          }*/
 	          testValues
 	      }
 	  }

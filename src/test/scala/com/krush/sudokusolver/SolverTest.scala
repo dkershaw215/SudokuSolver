@@ -15,7 +15,7 @@ class SolverTest extends FunSuite {
       var count = 0
       var time = 0L
 
-      for(line <- Source.fromFile("src/test/resources/easy_puzzles.txt").getLines()) {
+      for(line <- Source.fromFile("src/test/resources/hard_puzzles.txt").getLines()) {
 
         count = count + 1
   
